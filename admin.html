@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NextGen Admin</title>
+    
+    <!-- 1. CSS (Tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Polices -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 3. Config Tailwind -->
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { rajdhani: ['Rajdhani', 'sans-serif'] } } }
         }
     </script>
+
+    <!-- 4. Styles CSS -->
     <style>
         body { background-color: #050505; color: white; font-family: 'Rajdhani', sans-serif; }
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
@@ -26,7 +34,7 @@
             <h2 class="text-3xl font-bold mb-6 text-neonBlue">ACCÈS ADMIN</h2>
             <input type="email" id="email" placeholder="Email Admin" class="input-field mb-4">
             <input type="password" id="password" placeholder="Mot de passe" class="input-field mb-6">
-            <button onclick="login()" class="w-full bg-neonBlue text-white font-bold py-3 rounded hover:bg-white transition">SE CONNECTER</button>
+            <button onclick="login()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition">SE CONNECTER</button>
             <p id="login-error" class="text-red-500 mt-4 text-sm hidden">Erreur de connexion</p>
         </div>
     </div>
@@ -63,7 +71,7 @@
         </div>
     </div>
 
-    <!-- === MODAL (Formulaire Ajout/Modif) === -->
+    <!-- === MODAL (Formulaire) === -->
     <div id="modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
         <div class="glass p-6 rounded-xl w-full max-w-lg relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-xl">✕</button>
@@ -87,19 +95,19 @@
         </div>
     </div>
 
-    <!-- LOGIQUE -->
-       <!-- LOGIQUE JAVASCRIPT (UNIQUE SEULEMENT) -->
+    <!-- === LOGIQUE JAVASCRIPT (UNIQUE BLOC) === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         // --- CONFIGURATION ---
-        // Assure-toi que ces clés sont correctes
+        // MODIFIE ICI AVEC TES VRAIES CLES
         const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  
-
-        // On déclare supabase UNE SEULE FOIS
+        
+        // Initialisation unique
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- GESTION DE LA SESSION ---
+        // Au chargement de la page
         window.onload = checkSession;
 
         async function checkSession() {
@@ -111,13 +119,11 @@
             }
         }
 
-        // --- CONNEXION ---
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            // Petit contrôle
-            if(!email || !password) return alert("Remplissez les champs");
+            if(!email || !password) return alert("Merci de remplir l'email et le mot de passe");
 
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             
@@ -125,24 +131,22 @@
                 document.getElementById('login-error').classList.remove('hidden');
                 document.getElementById('login-error').innerText = error.message;
             } else {
-                // Si ça marche, on rafraichit la page pour lancer checkSession
+                // Recharger pour appliquer les changements d'état
                 window.location.reload(); 
             }
         }
 
-        // --- DÉCONNEXION ---
         async function logout() {
             await supabase.auth.signOut();
             window.location.reload();
         }
 
-        // --- LIRE LES PRODUITS ---
         async function fetchProducts() {
             const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
             if(error) { console.error(error); return; }
 
             const tbody = document.getElementById('product-list');
-            tbody.innerHTML = ''; // Vider la liste
+            tbody.innerHTML = '';
             
             data.forEach(p => {
                 const tr = document.createElement('tr');
@@ -160,7 +164,6 @@
             });
         }
 
-        // --- SAUVEGARDER (AJOUT OU MODIF) ---
         async function saveProduct() {
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('p-name').value;
@@ -171,35 +174,33 @@
             if(!name || !price) return alert("Nom et Prix requis");
 
             if (id) {
-                // UPDATE (Modification)
+                // Modification
                 const { error } = await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
-                if(error) alert("Erreur de mise à jour : " + error.message);
+                if(error) alert("Erreur : " + error.message);
             } else {
-                // INSERT (Création)
+                // Création
                 const { error } = await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
-                if(error) alert("Erreur d'ajout : " + error.message);
+                if(error) alert("Erreur : " + error.message);
             }
             
             closeModal();
             fetchProducts();
         }
 
-        // --- SUPPRIMER ---
         async function deleteProduct(id) {
-            if(confirm("Es-tu sûr de vouloir supprimer ce produit ?")) {
+            if(confirm("Confirmer la suppression ?")) {
                 const { error } = await supabase.from('products').delete().eq('id', id);
                 if(!error) fetchProducts();
-                else alert("Erreur suppression : " + error.message);
+                else alert("Erreur : " + error.message);
             }
         }
 
-        // --- GESTION DU MODAL (Fenêtre popup) ---
+        // Gestion Modal
         function openModal() {
             const modal = document.getElementById('modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
-            // Reset formulaire
+            // Reset
             document.getElementById('edit-id').value = '';
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
