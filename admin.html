@@ -88,14 +88,18 @@
     </div>
 
     <!-- LOGIQUE -->
+       <!-- LOGIQUE JAVASCRIPT (UNIQUE SEULEMENT) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIG (Identique à index.html)
-        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; // À REMPLACER
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  // À REMPLACER
+        // --- CONFIGURATION ---
+        // Assure-toi que ces clés sont correctes
+        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  
+
+        // On déclare supabase UNE SEULE FOIS
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Vérifier la session au chargement
+        // --- GESTION DE LA SESSION ---
         window.onload = checkSession;
 
         async function checkSession() {
@@ -107,32 +111,38 @@
             }
         }
 
-        // CONNEXION
+        // --- CONNEXION ---
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
+            // Petit contrôle
+            if(!email || !password) return alert("Remplissez les champs");
+
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             
             if (error) {
                 document.getElementById('login-error').classList.remove('hidden');
                 document.getElementById('login-error').innerText = error.message;
             } else {
-                checkSession();
+                // Si ça marche, on rafraichit la page pour lancer checkSession
+                window.location.reload(); 
             }
         }
 
-        // DÉCONNEXION
+        // --- DÉCONNEXION ---
         async function logout() {
             await supabase.auth.signOut();
             window.location.reload();
         }
 
-        // LIRE LES PRODUITS
+        // --- LIRE LES PRODUITS ---
         async function fetchProducts() {
             const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            if(error) { console.error(error); return; }
+
             const tbody = document.getElementById('product-list');
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; // Vider la liste
             
             data.forEach(p => {
                 const tr = document.createElement('tr');
@@ -150,7 +160,7 @@
             });
         }
 
-        // SAUVEGARDER (AJOUT OU MODIF)
+        // --- SAUVEGARDER (AJOUT OU MODIF) ---
         async function saveProduct() {
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('p-name').value;
@@ -161,30 +171,35 @@
             if(!name || !price) return alert("Nom et Prix requis");
 
             if (id) {
-                // UPDATE
-                await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
+                // UPDATE (Modification)
+                const { error } = await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
+                if(error) alert("Erreur de mise à jour : " + error.message);
             } else {
-                // INSERT
-                await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
+                // INSERT (Création)
+                const { error } = await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
+                if(error) alert("Erreur d'ajout : " + error.message);
             }
             
             closeModal();
             fetchProducts();
         }
 
-        // SUPPRIMER
+        // --- SUPPRIMER ---
         async function deleteProduct(id) {
             if(confirm("Es-tu sûr de vouloir supprimer ce produit ?")) {
-                await supabase.from('products').delete().eq('id', id);
-                fetchProducts();
+                const { error } = await supabase.from('products').delete().eq('id', id);
+                if(!error) fetchProducts();
+                else alert("Erreur suppression : " + error.message);
             }
         }
 
-        // GESTION MODAL
+        // --- GESTION DU MODAL (Fenêtre popup) ---
         function openModal() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
-            // Reset form
+            const modal = document.getElementById('modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Reset formulaire
             document.getElementById('edit-id').value = '';
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
@@ -194,8 +209,9 @@
         }
 
         function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal').classList.remove('flex');
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function editProduct(product) {
