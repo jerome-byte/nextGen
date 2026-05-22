@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NextGen Admin</title>
     
-    <!-- 1. CSS (Tailwind) -->
+    <!-- CSS TAILWIND -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Polices -->
+    <!-- POLICE -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- 3. Config Tailwind -->
+    <!-- CONFIG TAILWIND -->
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { rajdhani: ['Rajdhani', 'sans-serif'] } } }
         }
     </script>
 
-    <!-- 4. Styles CSS -->
+    <!-- STYLES -->
     <style>
         body { background-color: #050505; color: white; font-family: 'Rajdhani', sans-serif; }
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
@@ -28,7 +28,7 @@
 </head>
 <body class="min-h-screen">
 
-    <!-- === ÉCRAN DE CONNEXION === -->
+    <!-- ÉCRAN DE CONNEXION -->
     <div id="login-screen" class="flex items-center justify-center min-h-screen">
         <div class="glass p-8 rounded-xl w-full max-w-md text-center">
             <h2 class="text-3xl font-bold mb-6 text-neonBlue">ACCÈS ADMIN</h2>
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <!-- === TABLEAU DE BORD ADMIN === -->
+    <!-- TABLEAU DE BORD -->
     <div id="dashboard" class="hidden p-4 md:p-8">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-2xl font-bold">Gestion des Produits</h1>
@@ -51,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Liste des produits -->
         <div class="glass rounded-xl overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -63,51 +62,43 @@
                             <th class="p-4">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="product-list" class="text-sm">
-                        <!-- Rempli par JS -->
-                    </tbody>
+                    <tbody id="product-list" class="text-sm"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- === MODAL (Formulaire) === -->
+    <!-- MODAL -->
     <div id="modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
         <div class="glass p-6 rounded-xl w-full max-w-lg relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-xl">✕</button>
             <h2 id="modal-title" class="text-xl font-bold mb-4 text-neonBlue">Ajouter un produit</h2>
             
             <input type="hidden" id="edit-id">
-            
-            <label class="block text-gray-400 text-sm mb-1">Nom du produit</label>
+            <label class="block text-gray-400 text-sm mb-1">Nom</label>
             <input type="text" id="p-name" class="input-field mb-4">
-            
-            <label class="block text-gray-400 text-sm mb-1">Prix (FCFA)</label>
+            <label class="block text-gray-400 text-sm mb-1">Prix</label>
             <input type="number" id="p-price" class="input-field mb-4">
-            
             <label class="block text-gray-400 text-sm mb-1">Description</label>
             <textarea id="p-desc" rows="3" class="input-field mb-4"></textarea>
-            
-            <label class="block text-gray-400 text-sm mb-1">URL de l'image</label>
+            <label class="block text-gray-400 text-sm mb-1">Image URL</label>
             <input type="text" id="p-img" class="input-field mb-4" placeholder="https://...">
 
             <button onclick="saveProduct()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition mt-2">ENREGISTRER</button>
         </div>
     </div>
 
-    <!-- === LOGIQUE JAVASCRIPT (UNIQUE BLOC) === -->
+    <!-- JAVASCRIPT (UNIQUE SEUL BLOC) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
-    
-        // MODIFIE ICI AVEC TES VRAIES CLES
-        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; 
+        // === CONFIGURATION (REMPLIS CECI) ===
+        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  
         
-        // Initialisation unique
+        // Initialisation Supabase (Une seule fois ici)
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Au chargement de la page
         window.onload = checkSession;
 
         async function checkSession() {
@@ -122,16 +113,13 @@
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            if(!email || !password) return alert("Merci de remplir l'email et le mot de passe");
+            if(!email || !password) return alert("Champs requis");
 
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            
             if (error) {
                 document.getElementById('login-error').classList.remove('hidden');
                 document.getElementById('login-error').innerText = error.message;
             } else {
-                // Recharger pour appliquer les changements d'état
                 window.location.reload(); 
             }
         }
@@ -143,11 +131,9 @@
 
         async function fetchProducts() {
             const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-            if(error) { console.error(error); return; }
-
+            if(error) return console.error(error);
             const tbody = document.getElementById('product-list');
             tbody.innerHTML = '';
-            
             data.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-gray-800 hover:bg-white/5 transition";
@@ -174,33 +160,24 @@
             if(!name || !price) return alert("Nom et Prix requis");
 
             if (id) {
-                // Modification
-                const { error } = await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
-                if(error) alert("Erreur : " + error.message);
+                await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
             } else {
-                // Création
-                const { error } = await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
-                if(error) alert("Erreur : " + error.message);
+                await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
             }
-            
             closeModal();
             fetchProducts();
         }
 
         async function deleteProduct(id) {
-            if(confirm("Confirmer la suppression ?")) {
-                const { error } = await supabase.from('products').delete().eq('id', id);
-                if(!error) fetchProducts();
-                else alert("Erreur : " + error.message);
+            if(confirm("Supprimer ?")) {
+                await supabase.from('products').delete().eq('id', id);
+                fetchProducts();
             }
         }
 
-        // Gestion Modal
         function openModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            // Reset
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
             document.getElementById('edit-id').value = '';
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
@@ -210,14 +187,13 @@
         }
 
         function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal').classList.remove('flex');
         }
 
         function editProduct(product) {
             openModal();
-            document.getElementById('modal-title').innerText = "Modifier le produit";
+            document.getElementById('modal-title').innerText = "Modifier";
             document.getElementById('edit-id').value = product.id;
             document.getElementById('p-name').value = product.name;
             document.getElementById('p-price').value = product.price;
