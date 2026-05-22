@@ -89,20 +89,22 @@
     </div>
 
     <!-- JAVASCRIPT (UNIQUE SEUL BLOC) -->
+        <!-- === LOGIQUE JAVASCRIPT CORRIGÉE ET VÉRIFIÉE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
-        // === CONFIGURATION (REMPLIS CECI) ===
-        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co' 
+        // === CONFIGURATION ===
+        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  
         
-        // Initialisation Supabase (Une seule fois ici)
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // [CHANGEMENT 1] Ici, on déclare 'adminClient' au lieu de 'supabase'
+        const adminClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         window.onload = checkSession;
 
         async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
+            // [CHANGEMENT 2] Utilisation de adminClient
+            const { data: { session } } = await adminClient.auth.getSession();
             if (session) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
@@ -115,7 +117,8 @@
             const password = document.getElementById('password').value;
             if(!email || !password) return alert("Champs requis");
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            // [CHANGEMENT 3] Utilisation de adminClient
+            const { data, error } = await adminClient.auth.signInWithPassword({ email, password });
             if (error) {
                 document.getElementById('login-error').classList.remove('hidden');
                 document.getElementById('login-error').innerText = error.message;
@@ -125,12 +128,14 @@
         }
 
         async function logout() {
-            await supabase.auth.signOut();
+            // [CHANGEMENT 4] Utilisation de adminClient
+            await adminClient.auth.signOut();
             window.location.reload();
         }
 
         async function fetchProducts() {
-            const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            // [CHANGEMENT 5] Utilisation de adminClient
+            const { data, error } = await adminClient.from('products').select('*').order('created_at', { ascending: false });
             if(error) return console.error(error);
             const tbody = document.getElementById('product-list');
             tbody.innerHTML = '';
@@ -160,9 +165,11 @@
             if(!name || !price) return alert("Nom et Prix requis");
 
             if (id) {
-                await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
+                // [CHANGEMENT 6] Utilisation de adminClient pour Update
+                await adminClient.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
             } else {
-                await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
+                // [CHANGEMENT 7] Utilisation de adminClient pour Insert
+                await adminClient.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
             }
             closeModal();
             fetchProducts();
@@ -170,7 +177,8 @@
 
         async function deleteProduct(id) {
             if(confirm("Supprimer ?")) {
-                await supabase.from('products').delete().eq('id', id);
+                // [CHANGEMENT 8] Utilisation de adminClient pour Delete
+                await adminClient.from('products').delete().eq('id', id);
                 fetchProducts();
             }
         }
