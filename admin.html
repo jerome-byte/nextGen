@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { rajdhani: ['Rajdhani', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { background-color: #050505; color: white; font-family: 'Rajdhani', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; padding: 10px; width: 100%; border-radius: 5px; }
+        .input-field:focus { outline: none; border-color: #00f3ff; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- === ÉCRAN DE CONNEXION === -->
+    <div id="login-screen" class="flex items-center justify-center min-h-screen">
+        <div class="glass p-8 rounded-xl w-full max-w-md text-center">
+            <h2 class="text-3xl font-bold mb-6 text-neonBlue">ACCÈS ADMIN</h2>
+            <input type="email" id="email" placeholder="Email Admin" class="input-field mb-4">
+            <input type="password" id="password" placeholder="Mot de passe" class="input-field mb-6">
+            <button onclick="login()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition">SE CONNECTER</button>
+            <p id="login-error" class="text-red-500 mt-4 text-sm hidden">Erreur de connexion</p>
+        </div>
+    </div>
+
+    <!-- === TABLEAU DE BORD ADMIN === -->
+    <div id="dashboard" class="hidden p-4 md:p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold">Gestion des Produits</h1>
+            <div class="flex gap-4">
+                <button onclick="openModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold flex items-center gap-2">
+                    + NOUVEAU PRODUIT
+                </button>
+                <button onclick="logout()" class="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white">DÉCONNEXION</button>
+            </div>
+        </div>
+
+        <!-- Liste des produits -->
+        <div class="glass rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400 text-sm uppercase">
+                            <th class="p-4">Image</th>
+                            <th class="p-4">Nom</th>
+                            <th class="p-4">Prix</th>
+                            <th class="p-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list" class="text-sm">
+                        <!-- Rempli par JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- === MODAL (Formulaire Ajout/Modif) === -->
+    <div id="modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+        <div class="glass p-6 rounded-xl w-full max-w-lg relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-xl">✕</button>
+            <h2 id="modal-title" class="text-xl font-bold mb-4 text-neonBlue">Ajouter un produit</h2>
+            
+            <input type="hidden" id="edit-id">
+            
+            <label class="block text-gray-400 text-sm mb-1">Nom du produit</label>
+            <input type="text" id="p-name" class="input-field mb-4">
+            
+            <label class="block text-gray-400 text-sm mb-1">Prix (FCFA)</label>
+            <input type="number" id="p-price" class="input-field mb-4">
+            
+            <label class="block text-gray-400 text-sm mb-1">Description</label>
+            <textarea id="p-desc" rows="3" class="input-field mb-4"></textarea>
+            
+            <label class="block text-gray-400 text-sm mb-1">URL de l'image</label>
+            <input type="text" id="p-img" class="input-field mb-4" placeholder="https://...">
+
+            <button onclick="saveProduct()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition mt-2">ENREGISTRER</button>
+        </div>
+    </div>
+
+    <!-- LOGIQUE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // CONFIG (Identique à index.html)
+        const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; // À REMPLACER
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';                  // À REMPLACER
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Vérifier la session au chargement
+        window.onload = checkSession;
+
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                fetchProducts();
+            }
+        }
+
+        // CONNEXION
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('login-error').innerText = error.message;
+            } else {
+                checkSession();
+            }
+        }
+
+        // DÉCONNEXION
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.reload();
+        }
+
+        // LIRE LES PRODUITS
+        async function fetchProducts() {
+            const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('product-list');
+            tbody.innerHTML = '';
+            
+            data.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-800 hover:bg-white/5 transition";
+                tr.innerHTML = `
+                    <td class="p-4"><img src="${p.image_url}" class="w-12 h-12 object-cover rounded bg-gray-800"></td>
+                    <td class="p-4 font-bold">${p.name}</td>
+                    <td class="p-4 text-neonBlue">${p.price} FCFA</td>
+                    <td class="p-4 flex gap-2">
+                        <button onclick='editProduct(${JSON.stringify(p)})' class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-xs hover:bg-blue-600">MODIFIER</button>
+                        <button onclick="deleteProduct('${p.id}')" class="bg-red-900 text-red-300 px-3 py-1 rounded text-xs hover:bg-red-600">SUPPRIMER</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // SAUVEGARDER (AJOUT OU MODIF)
+        async function saveProduct() {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const desc = document.getElementById('p-desc').value;
+            const img = document.getElementById('p-img').value;
+
+            if(!name || !price) return alert("Nom et Prix requis");
+
+            if (id) {
+                // UPDATE
+                await supabase.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
+            } else {
+                // INSERT
+                await supabase.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
+            }
+            
+            closeModal();
+            fetchProducts();
+        }
+
+        // SUPPRIMER
+        async function deleteProduct(id) {
+            if(confirm("Es-tu sûr de vouloir supprimer ce produit ?")) {
+                await supabase.from('products').delete().eq('id', id);
+                fetchProducts();
+            }
+        }
+
+        // GESTION MODAL
+        function openModal() {
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
+            // Reset form
+            document.getElementById('edit-id').value = '';
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-desc').value = '';
+            document.getElementById('p-img').value = '';
+            document.getElementById('modal-title').innerText = "Ajouter un produit";
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal').classList.remove('flex');
+        }
+
+        function editProduct(product) {
+            openModal();
+            document.getElementById('modal-title').innerText = "Modifier le produit";
+            document.getElementById('edit-id').value = product.id;
+            document.getElementById('p-name').value = product.name;
+            document.getElementById('p-price').value = product.price;
+            document.getElementById('p-desc').value = product.description;
+            document.getElementById('p-img').value = product.image_url;
+        }
+    </script>
+</body>
+</html>
