@@ -139,70 +139,78 @@
 
 
     <!-- ========================================= -->
-    <!-- FOOTER PROFESSIONNEL                      -->
-    <!-- ========================================= -->
-    <footer class="bg-[#020202] border-t border-white/10 pt-16 pb-8 relative overflow-hidden">
-        <!-- Décoration lumineuse en haut du footer -->
-        <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neonPurple to-transparent opacity-50"></div>
+<!-- FOOTER PROFESSIONNEL AVEC LIEN ADMIN       -->
+<!-- ========================================= -->
+<footer class="bg-[#020202] border-t border-white/10 pt-16 pb-8 relative overflow-hidden">
+    <!-- Décoration lumineuse -->
+    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neonPurple to-transparent opacity-50"></div>
 
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                
-                <!-- Colonne 1: Brand -->
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-6 h-6 bg-white rounded flex items-center justify-center font-orbitron font-bold text-black text-xs">N</div>
-                        <span class="text-xl font-orbitron font-bold text-white">NEXTGEN</span>
-                    </div>
-                    <p class="text-gray-500 text-sm leading-relaxed max-w-sm">
-                        La référence du commerce électronique moderne au Togo. Design premium, livraison rapide et paiement sécurisé par T-Money et Flooz.
-                    </p>
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            
+            <!-- Colonne 1: Brand -->
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-6 h-6 bg-white rounded flex items-center justify-center font-orbitron font-bold text-black text-xs">N</div>
+                    <span class="text-xl font-orbitron font-bold text-white">NEXTGEN</span>
                 </div>
-
-                <!-- Colonne 2: Liens Rapides -->
-                <div>
-                    <h4 class="text-white font-orbitron font-bold mb-4 text-sm tracking-wide">NAVIGATION</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-neonBlue transition-colors">Accueil</a></li>
-                        <li><a href="#catalogue" class="hover:text-neonBlue transition-colors">Nouveautés</a></li>
-                        <li><a href="#" class="hover:text-neonBlue transition-colors">Promotions</a></li>
-                        <li><a href="#contact" class="hover:text-neonBlue transition-colors">Contactez-nous</a></li>
-                    </ul>
-                </div>
-
-                <!-- Colonne 3: Paiements & Légal -->
-                <div>
-                    <h4 class="text-white font-orbitron font-bold mb-4 text-sm tracking-wide">PAIEMENT SÉCURISÉ</h4>
-                    <div class="flex gap-3 mb-6">
-                        <!-- Badge T-Money CSS -->
-                        <div class="px-3 py-1 rounded border border-yellow-500/30 bg-yellow-500/10 text-yellow-500 text-xs font-bold flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500"></span> T-Money
-                        </div>
-                        <!-- Badge Flooz CSS -->
-                        <div class="px-3 py-1 rounded border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-bold flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-purple-500"></span> Flooz
-                        </div>
-                    </div>
-                    
-                    <h4 class="text-white font-orbitron font-bold mb-4 text-sm tracking-wide">LÉGAL</h4>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#" class="hover:text-gray-300">CGV</a></li>
-                        <li><a href="#" class="hover:text-gray-300">Politique de confidentialité</a></li>
-                    </ul>
-                </div>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-sm">
+                    La référence du commerce électronique moderne au Togo. Design premium, livraison rapide et paiement sécurisé par T-Money et Flooz.
+                </p>
             </div>
 
-            <!-- Copyright Bar -->
-            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-gray-600 text-xs">© 2024 NextGen Store Togo. Tous droits réservés.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="text-gray-600 hover:text-white transition-colors">Instagram</a>
-                    <a href="#" class="text-gray-600 hover:text-white transition-colors">Facebook</a>
-                    <a href="#" class="text-gray-600 hover:text-white transition-colors">WhatsApp</a>
+            <!-- Colonne 2: Liens Rapides -->
+            <div>
+                <h4 class="text-white font-orbitron font-bold mb-4 text-sm tracking-wide">NAVIGATION</h4>
+                <ul class="space-y-2 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-neonBlue transition-colors">Accueil</a></li>
+                    <li><a href="#catalogue" class="hover:text-neonBlue transition-colors">Nouveautés</a></li>
+                    <li><a href="#" class="hover:text-neonBlue transition-colors">Promotions</a></li>
+                    <li><a href="#contact" class="hover:text-neonBlue transition-colors">Contactez-nous</a></li>
+                </ul>
+            </div>
+
+            <!-- Colonne 3: Paiements & Légal (LIEN ADMIN AJOUTÉ ICI) -->
+            <div>
+                <h4 class="text-white font-orbitron font-bold mb-4 text-sm tracking-wide">LÉGAL</h4>
+                <ul class="space-y-2 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-gray-300">CGV</a></li>
+                    <li><a href="#" class="hover:text-gray-300">Politique de confidentialité</a></li>
+                    <!-- === LE LIEN VERS L'ADMIN === -->
+                    <li>
+                        <a href="admin.html" class="flex items-center gap-2 text-gray-600 hover:text-neonBlue transition-colors mt-2 border-t border-white/5 pt-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Espace Admin
+                        </a>
+                    </li>
+                    <!-- ============================ -->
+                </ul>
+                
+                <h4 class="text-white font-orbitron font-bold mb-4 mt-6 text-sm tracking-wide">PAIEMENT</h4>
+                <div class="flex gap-3">
+                    <div class="px-3 py-1 rounded border border-yellow-500/30 bg-yellow-500/10 text-yellow-500 text-xs font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500"></span> T-Money
+                    </div>
+                    <div class="px-3 py-1 rounded border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-purple-500"></span> Flooz
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
+
+        <!-- Copyright Bar -->
+        <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-600 text-xs">© 2024 NextGen Store Togo. Tous droits réservés.</p>
+            <div class="flex gap-4">
+                <a href="#" class="text-gray-600 hover:text-white transition-colors">Instagram</a>
+                <a href="#" class="text-gray-600 hover:text-white transition-colors">Facebook</a>
+                <a href="#" class="text-gray-600 hover:text-white transition-colors">WhatsApp</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
 
     <!-- ========================================= -->
