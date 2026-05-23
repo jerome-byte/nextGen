@@ -246,9 +246,6 @@
     </footer>
 
 
-    <!-- ========================================= -->
-    <!-- LOGIQUE JAVASCRIPT                         -->
-    <!-- ========================================= -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -258,24 +255,41 @@
         const MY_NUMBER = "97324256"; 
         const WHATSAPP_NUMBER = "22897324256";
 
-        
         document.addEventListener('DOMContentLoaded', async () => {
             const grid = document.getElementById('product-grid');
             const loader = document.getElementById('loader');
             
-            await new Promise(r => setTimeout(r, 1000));
-            loader.style.display = 'none';
+            // 1. On initialise avec un tableau vide (plus de MOCK_DATA)
+            let products = [];
 
-            let products = MOCK_DATA;
-
-            if (!SUPABASE_URL.includes('xyz') && window.supabase) {
+            // 2. Connexion à Supabase pour récupérer les vrais produits
+            if (window.supabase) {
                 try {
                     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    const { data, error } = await client.from('products').select('*').eq('is_active', true);
-                    if(!error && data) products = data;
-                } catch(e) { console.log("Mode Démo activé"); }
+                    
+                    // On sélectionne tout, filtré par is_active = true
+                    const { data, error } = await client
+                        .from('products')
+                        .select('*')
+                        .eq('is_active', true);
+
+                    if (error) {
+                        console.error("Erreur de chargement Supabase :", error);
+                        // Affiche une erreur visuelle si besoin, ou laisse vide
+                    } else if (data) {
+                        products = data; // Les produits sont chargés !
+                        console.log("Produits chargés :", products.length);
+                    }
+                } catch(e) { 
+                    console.error("Erreur critique :", e); 
+                }
             }
 
+            // Petit délai pour l'effet visuel du loader
+            await new Promise(r => setTimeout(r, 800));
+            loader.style.display = 'none';
+
+            // 3. Affichage
             renderProducts(products);
         });
 
@@ -283,7 +297,17 @@
             const grid = document.getElementById('product-grid');
             grid.innerHTML = "";
 
+            // Gestion si aucun produit
+            if (products.length === 0) {
+                grid.innerHTML = `<p class="text-center col-span-3 text-gray-500">Aucun produit disponible pour le moment.</p>`;
+                return;
+            }
+
             products.forEach(product => {
+                // Vérification sécurité si l'image est vide
+                const imageUrl = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
+                
+                // NOTE: J'ai gardé tes liens USSD modifiés
                 const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
                 const floozLink = `tel:*155*2*${MY_NUMBER}*${product.price}#`;
                 const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=Bonjour, je veux payer pour : ${product.name}`;
@@ -291,10 +315,9 @@
                 const card = document.createElement('div');
                 card.className = "glass-card rounded-2xl overflow-hidden flex flex-col h-full group";
                 
-                // MODIF JS ICI: bg-gray-200 pour le mode clair, dark:bg-gray-800 pour le sombre
                 card.innerHTML = `
                     <div class="relative h-56 overflow-hidden bg-gray-200 dark:bg-gray-800">
-                        <img src="${product.image_url}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="${product.name}">
+                        <img src="${imageUrl}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Error+Image'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                         <div class="absolute bottom-4 left-4">
                             <div class="bg-black/80 backdrop-blur text-neonBlue border border-neonBlue/30 px-3 py-1 rounded-full text-sm font-bold font-orbitron inline-block">
@@ -304,9 +327,7 @@
                     </div>
                     
                     <div class="p-6 flex flex-col flex-grow">
-                        <!-- MODIF JS ICI: Titre produit en gris foncé par défaut -->
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white font-orbitron mb-2 group-hover:text-neonBlue transition-colors">${product.name}</h3>
-                        <!-- MODIF JS ICI: Description en gris moyen par défaut -->
                         <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow leading-relaxed">${product.description}</p>
                         
                         <div class="space-y-3 mt-auto">
