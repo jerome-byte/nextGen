@@ -12,9 +12,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- CONFIG TAILWIND -->
+        <!-- CONFIG TAILWIND -->
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { rajdhani: ['Rajdhani', 'sans-serif'] } } }
+            darkMode: 'class', // C'est la ligne importante qui active le switch
+            theme: { 
+                extend: { 
+                    fontFamily: { rajdhani: ['Rajdhani', 'sans-serif'], orbitron: ['Orbitron', 'sans-serif'] },
+                    colors: {
+                        neonBlue: '#00f3ff',
+                        neonPurple: '#bc13fe',
+                        darkBg: '#050505', // Pour info
+                    }
+                } 
+            }
         }
     </script>
 
@@ -22,8 +33,16 @@
     <style>
         body { background-color: #050505; color: white; font-family: 'Rajdhani', sans-serif; }
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; padding: 10px; width: 100%; border-radius: 5px; }
-        .input-field:focus { outline: none; border-color: #00f3ff; }
+.input-field { 
+    background: #f3f4f6; /* Gris très clair */
+    border: 1px solid #d1d5db; 
+    color: #111827; 
+}
+html.dark .input-field { 
+    background: rgba(0,0,0,0.5); 
+    border: 1px solid #333; 
+    color: white; 
+}        .input-field:focus { outline: none; border-color: #00f3ff; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -208,6 +227,34 @@
             document.getElementById('p-desc').value = product.description;
             document.getElementById('p-img').value = product.image_url;
         }
+    </script>
+        <!-- === GESTION DU THÈME (SOMBRE / CLAIR) === -->
+    <script>
+        // Fonction pour initialiser le thème au chargement
+        function initTheme() {
+            // Si l'utilisateur a déjà choisi, on applique son choix
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // Fonction pour changer le thème quand on clique sur le bouton
+        function toggleTheme() {
+            // Si c'est actuellement sombre
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                // Sinon on passe en sombre
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        }
+
+        // Lancer au démarrage
+        initTheme();
     </script>
 </body>
 </html>
