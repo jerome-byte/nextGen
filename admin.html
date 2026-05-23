@@ -185,7 +185,17 @@
             <textarea id="p-desc" rows="3" class="input-field mb-4 rounded-lg"></textarea>
             
                         <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1 font-bold">Image du produit</label>
-            
+                        <!-- PRÉVISUALISATION IMAGE ACTUELLE (Cachée par défaut) -->
+            <div id="current-image-preview" class="mb-4 hidden relative group">
+                <p class="text-xs text-neonBlue mb-2 font-bold uppercase tracking-wide">Image actuelle :</p>
+                <div class="relative w-full h-48 rounded-lg overflow-hidden border border-neonBlue/30 shadow-[0_0_10px_rgba(0,243,255,0.1)]">
+                    <img id="preview-img" src="" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                    <!-- Petit badge pour confirmer que c'est l'image en ligne -->
+                    <div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">
+                        En ligne
+                    </div>
+                </div>
+            </div>
             <!-- NOUVELLE ZONE D'UPLOAD STYLISÉE -->
             <label for="p-img" class="group flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 dark:hover:border-neonBlue hover:border-neonBlue hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition duration-300 relative overflow-hidden">
                 
@@ -347,7 +357,7 @@
             }
         }
 
-        function openModal() {
+                function openModal() {
             const modal = document.getElementById('modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -355,9 +365,16 @@
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
             document.getElementById('p-desc').value = '';
-            document.getElementById('p-img').value = ''; // Reset file input
+            document.getElementById('p-img').value = ''; 
             document.getElementById('current-image-url').value = '';
             document.getElementById('modal-title').innerText = "Ajouter un produit";
+            
+            // Reset affichage
+            document.getElementById('file-name-display').innerText = "Cliquez ou glissez une image ici";
+            document.getElementById('file-name-display').classList.add('text-gray-500', 'dark:text-gray-400');
+            
+            // CACHER la prévisualisation (car c'est un nouveau produit)
+            document.getElementById('current-image-preview').classList.add('hidden');
         }
 
         function closeModal() {
@@ -366,15 +383,30 @@
             modal.classList.remove('flex');
         }
 
-        function editProduct(product) {
-            openModal();
+               function editProduct(product) {
+            openModal(); // Reset les champs d'abord
             document.getElementById('modal-title').innerText = "Modifier le produit";
             document.getElementById('edit-id').value = product.id;
             document.getElementById('p-name').value = product.name;
             document.getElementById('p-price').value = product.price;
             document.getElementById('p-desc').value = product.description;
-            document.getElementById('current-image-url').value = product.image_url; // Sauvegarde l'URL actuelle
-            // On ne met pas de valeur à l'input file pour sécurité
+            document.getElementById('current-image-url').value = product.image_url; // Sauvegarde l'URL
+            
+            // === AFFICHER L'IMAGE ACTUELLE ===
+            const previewContainer = document.getElementById('current-image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const fileNameDisplay = document.getElementById('file-name-display');
+
+            if (product.image_url) {
+                // Afficher l'image
+                previewImg.src = product.image_url;
+                previewContainer.classList.remove('hidden');
+                
+                // Changer le texte du champ upload pour dire que c'est optionnel
+                fileNameDisplay.innerText = "Charger une nouvelle image (Optionnel)";
+                fileNameDisplay.classList.remove('text-gray-500', 'dark:text-gray-400');
+                fileNameDisplay.classList.add('text-neonBlue', 'font-bold');
+            }
         }
 
                 // === FONCTION POUR AFFICHER LE NOM DU FICHIER ===
