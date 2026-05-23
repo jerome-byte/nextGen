@@ -59,26 +59,29 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* 3. Les Cartes Produits (SANS OMBRE) */
+        /* 3. Les Cartes Produits (MODIF: AUCUNE OMBRE) */
         .glass-card {
+            /* Mode Clair */
             background: #ffffff; 
-            /* box-shadow supprimé pour la qualité de l'image */
             border: 1px solid #e5e7eb; 
             color: #1f2937;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: none; /* FORCÉ AUCUNE OMBRE */
         }
 
         html.dark .glass-card {
+            /* Mode Sombre */
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
+            box-shadow: none; /* FORCÉ AUCUNE OMBRE */
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 243, 255, 0.3);
+            border-color: rgba(0, 243, 255, 0.5);
             transform: translateY(-5px);
-            /* box-shadow supprimé */
+            box-shadow: none; /* FORCÉ AUCUNE OMBRE AU SURVOL */
         }
 
         /* Loader */
@@ -95,12 +98,6 @@
 
         /* Utilitaires de texte */
         .text-glow { text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        
-        /* Animation Menu Mobile */
-        .mobile-menu-enter { opacity: 0; transform: translateY(-20px); }
-        .mobile-menu-enter-active { opacity: 1; transform: translateY(0); transition: all 0.3s ease-out; }
-        .mobile-menu-exit { opacity: 1; transform: translateY(0); }
-        .mobile-menu-exit-active { opacity: 0; transform: translateY(-20px); transition: all 0.3s ease-in; }
     </style>
 </head>
 <body class="font-rajdhani flex flex-col">
@@ -112,47 +109,54 @@
         <div class="container mx-auto px-4 h-20 flex items-center justify-between">
             
             <!-- LOGO -->
-            <a href="#" onclick="window.scrollTo(0,0)" class="flex items-center gap-2 group">
+            <a href="#" class="flex items-center gap-2 group">
                 <div class="w-8 h-8 bg-gradient-to-tr from-neonBlue to-neonPurple rounded flex items-center justify-center font-orbitron font-bold text-black text-lg shadow-[0_0_15px_rgba(0,243,255,0.5)]">N</div>
                 <span class="text-2xl font-orbitron font-bold tracking-wider text-gray-900 dark:text-white group-hover:text-neonBlue transition-colors">NEXT<span class="text-gray-500 dark:text-gray-500">GEN</span></span>
             </a>
 
             <!-- NAVIGATION DESKTOP -->
             <nav class="hidden md:flex items-center gap-8">
-                <a href="#" onclick="window.scrollTo(0,0)" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-neonBlue dark:hover:text-white transition-all cursor-pointer">ACCUEIL</a>
-                <a href="#catalogue" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-neonBlue dark:hover:text-white transition-all">CATALOGUE</a>
-                <a href="#footer" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-neonBlue dark:hover:text-white transition-all">SUPPORT</a>
+                <a href="#" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:text-glow transition-all">ACCUEIL</a>
+                <a href="#catalogue" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:text-glow transition-all">CATALOGUE</a>
+                <a href="#footer" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:text-glow transition-all">SUPPORT</a>
             </nav>
 
-            <!-- BOUTONS DROITE (THEME + CONTACT) -->
-            <div class="flex items-center gap-4">
+            <!-- ACTIONS (Thème + Contact) -->
+            <div class="hidden md:flex items-center gap-4">
                 <button onclick="toggleTheme()" class="p-2 rounded-full border border-gray-300 dark:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10 transition text-gray-800 dark:text-white">
-                    <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12 a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12 a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
-
-                <a href="#footer" class="hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-neonBlue/30 text-neonBlue hover:bg-neonBlue hover:text-black transition-all duration-300 text-sm font-bold tracking-wide shadow-[0_0_10px_rgba(0,243,255,0.2)]">
-                    <span>CONTACT</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                <a href="#footer" class="flex items-center gap-2 px-4 py-2 rounded-full border border-neonBlue/30 text-neonBlue hover:bg-neonBlue hover:text-black transition-all duration-300 text-sm font-bold tracking-wide">
+                    <span>NOUS CONTACTER</span>
                 </a>
-
-                <!-- MENU MOBILE BUTTON -->
-                <button onclick="toggleMobileMenu()" class="md:hidden text-gray-900 dark:text-white focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                </button>
             </div>
+
+            <!-- BOUTON MENU MOBILE -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-gray-900 dark:text-white focus:outline-none z-50 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
         </div>
     </header>
 
-    <!-- OVERLAY MENU MOBILE (Fonctionnel) -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-xl hidden flex-col items-center justify-center space-y-8 transition-opacity duration-300 opacity-0">
-        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-gray-500 hover:text-red-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    <!-- ========================================= -->
+    <!-- MENU MOBILE OVERLAY                      -->
+    <!-- ========================================= -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-gray-900/95 backdrop-blur-md hidden flex-col items-center justify-center space-y-8 text-white transition-opacity duration-300">
+        <!-- Bouton Fermer -->
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-white hover:text-neonBlue transition p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
         </button>
         
-        <a href="#" onclick="toggleMobileMenu(); window.scrollTo(0,0)" class="text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-neonBlue">ACCUEIL</a>
-        <a href="#catalogue" onclick="toggleMobileMenu()" class="text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-neonBlue">CATALOGUE</a>
-        <a href="#footer" onclick="toggleMobileMenu()" class="text-2xl font-bold text-gray-800 dark:text-gray-100 hover:text-neonBlue">SUPPORT</a>
+        <!-- Liens du Menu Mobile -->
+        <a href="#" onclick="toggleMobileMenu()" class="text-4xl font-orbitron font-bold hover:text-neonBlue transition-colors transform hover:scale-110 duration-200">ACCUEIL</a>
+        <a href="#catalogue" onclick="toggleMobileMenu()" class="text-4xl font-orbitron font-bold hover:text-neonBlue transition-colors transform hover:scale-110 duration-200">CATALOGUE</a>
+        <a href="#footer" onclick="toggleMobileMenu()" class="text-4xl font-orbitron font-bold hover:text-neonBlue transition-colors transform hover:scale-110 duration-200">SUPPORT</a>
+        <a href="#footer" onclick="toggleMobileMenu()" class="mt-8 px-8 py-3 rounded-full border-2 border-neonBlue text-neonBlue font-bold hover:bg-neonBlue hover:text-black transition text-xl tracking-widest">NOUS CONTACTER</a>
     </div>
 
 
@@ -179,7 +183,7 @@
 
 
     <!-- ========================================= -->
-    <!-- FOOTER PROFESSIONNEL AVEC FORMULAIRE       -->
+    <!-- FOOTER PROFESSIONNEL AVEC FORMULAIRE     -->
     <!-- ========================================= -->
     <footer id="footer" class="bg-gray-100 dark:bg-[#020202] border-t border-gray-300 dark:border-white/10 pt-16 pb-8 relative overflow-hidden transition-colors duration-300">
         <!-- Décoration lumineuse -->
@@ -188,7 +192,7 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 
-                <!-- Colonne 1: Brand & Formulaire -->
+                <!-- Colonne 1: Brand + Formulaire Contact -->
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-6 h-6 bg-white rounded flex items-center justify-center font-orbitron font-bold text-black text-xs">N</div>
@@ -198,27 +202,26 @@
                         La référence du commerce électronique moderne au Togo. Design premium, livraison rapide et paiement sécurisé par T-Money et Flooz.
                     </p>
 
-                    <!-- === NOUVEAU FORMULAIRE WHATSAPP === -->
-                    <div class="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4 shadow-sm">
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Contact Rapide</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="footer-msg" placeholder="Votre message ici..." class="flex-1 bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-neonBlue transition">
-                            <button onclick="sendFooterWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-green-500/30">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    <!-- === FORMULAIRE FOOTER (NOUS CONTACTER) === -->
+                    <div class="max-w-sm">
+                        <h4 class="text-neonBlue font-bold mb-3 font-orbitron text-sm">CONTACT DIRECT</h4>
+                        <div class="space-y-3">
+                            <input id="footer-message" type="text" placeholder="Votre message ou question..." class="w-full bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue transition text-sm">
+                            <button onclick="sendFooterMessage()" class="w-full bg-neonBlue text-black font-bold py-3 rounded-lg hover:bg-white hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                ENVOYER SUR WHATSAPP
                             </button>
                         </div>
                     </div>
-                    <!-- ========================================== -->
-
                 </div>
 
                 <!-- Colonne 2: Liens Rapides -->
                 <div>
                     <h4 class="text-gray-900 dark:text-white font-orbitron font-bold mb-4 text-sm tracking-wide">NAVIGATION</h4>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-500">
-                        <li><a href="#" onclick="window.scrollTo(0,0)" class="hover:text-neonBlue transition-colors cursor-pointer">Accueil</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition-colors">Accueil</a></li>
                         <li><a href="#catalogue" class="hover:text-neonBlue transition-colors">Nouveautés</a></li>
-                        <li><a href="#" class="hover:text-neonBlue transition-colors cursor-pointer">Promotions</a></li>
+                        <li><a href="#" class="hover:text-neonBlue transition-colors">Promotions</a></li>
                         <li><a href="#footer" class="hover:text-neonBlue transition-colors">Contactez-nous</a></li>
                     </ul>
                 </div>
@@ -231,7 +234,9 @@
                         <li><a href="#" class="hover:text-gray-900 dark:hover:text-gray-300">Politique de confidentialité</a></li>
                         <li>
                             <a href="admin.html" class="flex items-center gap-2 text-gray-700 dark:text-gray-600 hover:text-neonBlue transition-colors mt-2 border-t border-gray-300 dark:border-white/5 pt-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
                                 Espace Admin
                             </a>
                         </li>
@@ -262,6 +267,7 @@
     </footer>
 
 
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -285,20 +291,13 @@
                         .select('*')
                         .eq('is_active', true);
 
-                    if (error) {
-                        console.error("Erreur de chargement Supabase :", error);
-                    } else if (data) {
-                        products = data;
-                        console.log("Produits chargés :", products.length);
-                    }
-                } catch(e) { 
-                    console.error("Erreur critique :", e); 
-                }
+                    if (error) console.error("Erreur de chargement Supabase :", error);
+                    else if (data) products = data;
+                } catch(e) { console.error("Erreur critique :", e); }
             }
 
             await new Promise(r => setTimeout(r, 800));
             loader.style.display = 'none';
-
             renderProducts(products);
         });
 
@@ -320,11 +319,10 @@
                 const card = document.createElement('div');
                 card.className = "glass-card rounded-2xl overflow-hidden flex flex-col h-full group";
                 
-                // NOTE: L'overlay a son opacity réduite à 50 pour laisser plus passer la qualité de l'image
                 card.innerHTML = `
                     <div class="relative h-56 overflow-hidden bg-gray-200 dark:bg-gray-800">
-                        <img src="${imageUrl}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Error+Image'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
+                        <img src="${imageUrl}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 shadow-none" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Error+Image'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                         <div class="absolute bottom-4 left-4">
                             <div class="bg-black/80 backdrop-blur text-neonBlue border border-neonBlue/30 px-3 py-1 rounded-full text-sm font-bold font-orbitron inline-block">
                                 ${product.price.toLocaleString()} FCFA
@@ -356,37 +354,25 @@
             });
         }
 
-        // --- GESTION MENU MOBILE ---
+        // === FONCTIONS FOOTER ET MENU MOBILE ===
+        
+        function sendFooterMessage() {
+            const msg = document.getElementById('footer-message').value;
+            if(!msg) return alert("Veuillez entrer un message.");
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // Fonction simple et robuste pour le menu mobile
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('hidden')) {
-                // Ouvrir
-                menu.classList.remove('hidden');
-                setTimeout(() => {
-                    menu.classList.remove('opacity-0');
-                }, 10); // Petit délai pour l'animation
-                document.body.style.overflow = 'hidden'; // Empêcher le scroll
-            } else {
-                // Fermer
-                menu.classList.add('opacity-0');
-                setTimeout(() => {
-                    menu.classList.add('hidden');
-                }, 300); // Attendre la fin de l'animation
-                document.body.style.overflow = 'auto';
-            }
+            // Basculer la classe 'hidden'
+            menu.classList.toggle('hidden');
         }
-
-        // --- ENVOI WHATSAPP FOOTER ---
-        function sendFooterWhatsApp() {
-            const msg = document.getElementById('footer-msg').value;
-            if(!msg) return alert("Veuillez entrer un message.");
-            
-            const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-            window.open(link, '_blank');
-            document.getElementById('footer-msg').value = ''; // Vider après envoi
-        }
-
-        // --- GESTION DU THÈME ---
+    </script>
+    
+    <!-- === GESTION DU THÈME (SOMBRE / CLAIR) === -->
+    <script>
         function initTheme() {
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
