@@ -62,7 +62,7 @@
             background: #f3f4f6; 
             border: 1px solid #d1d5db; 
             color: #111827; 
-            display: block; /* Force le bloc pour l'alignement vertical */
+            display: block; 
             width: 100%;
             transition: all 0.3s;
         }
@@ -86,21 +86,29 @@
             
             <!-- Bouton Thème -->
             <button onclick="toggleTheme()" class="absolute top-4 right-4 p-2 rounded-full border border-gray-300 dark:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10 transition text-gray-800 dark:text-white">
-                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12 a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </button>
 
             <h2 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white font-orbitron">ACCÈS ADMIN</h2>
             <p class="text-gray-500 dark:text-gray-400 mb-6 text-sm">Gestion NextGen Store</p>
             
-            <input type="email" id="email" placeholder="Email Admin" class="input-field mb-4 rounded-lg">
-            <input type="password" id="password" placeholder="Mot de passe" class="input-field mb-6 rounded-lg">
+            <input type="email" id="email" placeholder="Email Admin" class="input-field mb-4 rounded-lg px-4 py-3">
+            
+            <!-- CHAMP MOT DE PASSE AVEC OEIL -->
+            <div class="relative mb-6">
+                <input type="password" id="password" placeholder="Mot de passe" class="input-field rounded-lg px-4 py-3 pr-10">
+                <button type="button" onclick="toggleLoginPassword()" class="absolute right-3 top-3 text-gray-500 dark:text-gray-400 hover:text-neonBlue focus:outline-none">
+                    <!-- Icône Oeil Ouvert -->
+                    <svg id="eye-open" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <!-- Icône Oeil Fermé -->
+                    <svg id="eye-closed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                </button>
+            </div>
             
             <button onclick="login()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition mb-4">SE CONNECTER</button>
             
             <p id="login-error" class="text-red-500 text-sm hidden mb-2">Erreur de connexion</p>
-
-            <!-- LIEN RETOUR VERS INDEX -->
             <a href="index.html" class="text-sm text-neonBlue hover:underline transition">← Retour au site</a>
         </div>
     </div>
@@ -109,27 +117,24 @@
     <div id="dashboard" class="hidden p-4 md:p-8">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <div class="flex items-center gap-4">
-                <!-- LIEN RETOUR VERS INDEX (DASHBOARD) -->
                 <a href="index.html" class="text-gray-600 dark:text-gray-400 hover:text-neonBlue transition flex items-center gap-1 font-bold">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                     Retour
                 </a>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestion des Produits</h1>
             </div>
             
-            <div class="flex gap-4">
-                <!-- Bouton Thème -->
+            <!-- Boutons Header: Flex wrap pour mobile -->
+            <div class="flex flex-wrap gap-3 w-full md:w-auto justify-center md:justify-end">
                 <button onclick="toggleTheme()" class="p-2 rounded-full border border-gray-300 dark:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10 transition text-gray-800 dark:text-white">
-                    <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12 a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
 
-                <button onclick="openModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold flex items-center gap-2">
-                    + NOUVEAU PRODUIT
+                <button onclick="openModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold flex items-center gap-2 text-sm md:text-base">
+                    + NOUVEAU
                 </button>
-                <button onclick="logout()" class="border border-red-500 text-red-600 dark:text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition">DÉCONNEXION</button>
+                <button onclick="logout()" class="border border-red-500 text-red-600 dark:text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition text-sm md:text-base">DÉCONNEXION</button>
             </div>
         </div>
 
@@ -141,7 +146,7 @@
                             <th class="p-4">Image</th>
                             <th class="p-4">Nom</th>
                             <th class="p-4">Prix</th>
-                            <th class="p-4">Actions</th>
+                            <th class="p-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="product-list" class="text-sm"></tbody>
@@ -151,27 +156,32 @@
     </div>
 
     <!-- MODAL -->
-    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity">
-        <div class="glass p-6 rounded-xl w-full max-w-lg relative m-4">
+    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity p-4">
+        <div class="glass p-6 rounded-xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-xl transition">✕</button>
             
             <h2 id="modal-title" class="text-xl font-bold mb-4 text-neonBlue font-orbitron">Ajouter un produit</h2>
             
             <input type="hidden" id="edit-id">
             
-            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1">Nom</label>
+            <!-- Champ caché pour garder l'ancienne image si on ne change pas le fichier -->
+            <input type="hidden" id="current-image-url">
+
+            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1 font-bold">Nom</label>
             <input type="text" id="p-name" class="input-field mb-4 rounded-lg">
             
-            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1">Prix</label>
+            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1 font-bold">Prix</label>
             <input type="number" id="p-price" class="input-field mb-4 rounded-lg">
             
-            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1">Description</label>
+            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1 font-bold">Description</label>
             <textarea id="p-desc" rows="3" class="input-field mb-4 rounded-lg"></textarea>
             
-            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1">Image URL</label>
-            <input type="text" id="p-img" class="input-field mb-4 rounded-lg" placeholder="https://...">
+            <label class="block text-gray-600 dark:text-gray-400 text-sm mb-1 font-bold">Image du produit</label>
+            <!-- CHAMP FICHIER AU LIEU DE URL -->
+            <input type="file" id="p-img" accept="image/*" class="input-field mb-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neonBlue/20 file:text-neonBlue hover:file:bg-neonBlue/30">
+            <p class="text-xs text-gray-500 mb-4">Laisse vide pour conserver l'image actuelle (en modification).</p>
 
-            <button onclick="saveProduct()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition mt-2">ENREGISTRER</button>
+            <button onclick="saveProduct()" class="w-full bg-neonBlue text-black font-bold py-3 rounded hover:bg-white transition mt-2 text-lg">ENREGISTRER</button>
         </div>
     </div>
 
@@ -184,6 +194,23 @@
         const adminClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         window.onload = checkSession;
+
+        // --- LOGIN PASSWORD TOGGLE ---
+        function toggleLoginPassword() {
+            const input = document.getElementById('password');
+            const eyeOpen = document.getElementById('eye-open');
+            const eyeClosed = document.getElementById('eye-closed');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            } else {
+                input.type = 'password';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            }
+        }
 
         async function checkSession() {
             const { data: { session } } = await adminClient.auth.getSession();
@@ -222,13 +249,12 @@
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-gray-200 dark:border-gray-800 hover-row transition";
                 tr.innerHTML = `
-                    <td class="p-4"><img src="${p.image_url}" class="w-12 h-12 object-cover rounded bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600"></td>
+                    <td class="p-4 text-center"><img src="${p.image_url}" class="w-12 h-12 object-cover rounded bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 mx-auto"></td>
                     <td class="p-4 font-bold text-gray-900 dark:text-white">${p.name}</td>
-                    <td class="p-4 text-neonBlue font-bold">${p.price} FCFA</td>
-                    <td class="p-4 flex flex-col gap-2">
-                        <!-- MODIFICATION: flex-col au lieu de flex gap-2 (Alignement vertical) -->
-                        <button onclick='editProduct(${JSON.stringify(p)})' class="bg-blue-100 hover:bg-blue-600 text-blue-700 hover:text-white px-3 py-1 rounded text-xs font-bold transition w-full text-center">MODIFIER</button>
-                        <button onclick="deleteProduct('${p.id}')" class="bg-red-100 hover:bg-red-600 text-red-700 hover:text-white px-3 py-1 rounded text-xs font-bold transition w-full text-center">SUPPRIMER</button>
+                    <td class="p-4 text-neonBlue font-bold text-center">${p.price} FCFA</td>
+                    <td class="p-4 flex flex-col gap-2 items-center justify-center min-w-[100px]">
+                        <button onclick='editProduct(${JSON.stringify(p)})' class="w-full bg-blue-100 hover:bg-blue-600 text-blue-700 hover:text-white px-3 py-2 rounded text-xs font-bold transition">MODIFIER</button>
+                        <button onclick="deleteProduct('${p.id}')" class="w-full bg-red-100 hover:bg-red-600 text-red-700 hover:text-white px-3 py-2 rounded text-xs font-bold transition">SUPPRIMER</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -240,14 +266,42 @@
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const desc = document.getElementById('p-desc').value;
-            const img = document.getElementById('p-img').value;
+            const fileInput = document.getElementById('p-img');
+            const currentImgUrl = document.getElementById('current-image-url').value;
 
             if(!name || !price) return alert("Nom et Prix requis");
 
+            let imageUrl = currentImgUrl; // Par défaut, on garde l'ancienne
+
+            // LOGIQUE D'UPLOAD FICHIER
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileName = `${Date.now()}_${file.name}`; // Nom unique
+                
+                // Upload vers Supabase Storage (Bucket 'products')
+                const { data: uploadData, error: uploadError } = await adminClient.storage
+                    .from('products')
+                    .upload(fileName, file);
+
+                if (uploadError) {
+                    alert("Erreur upload image: " + uploadError.message);
+                    return;
+                }
+
+                // Récupérer l'URL publique
+                const { data: { publicUrl } } = adminClient.storage
+                    .from('products')
+                    .getPublicUrl(fileName);
+
+                imageUrl = publicUrl;
+            }
+
             if (id) {
-                await adminClient.from('products').update({ name, price, description: desc, image_url: img }).eq('id', id);
+                // UPDATE
+                await adminClient.from('products').update({ name, price, description: desc, image_url: imageUrl }).eq('id', id);
             } else {
-                await adminClient.from('products').insert([{ name, price, description: desc, image_url: img, is_active: true }]);
+                // INSERT
+                await adminClient.from('products').insert([{ name, price, description: desc, image_url: imageUrl, is_active: true }]);
             }
             closeModal();
             fetchProducts();
@@ -268,7 +322,8 @@
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
             document.getElementById('p-desc').value = '';
-            document.getElementById('p-img').value = '';
+            document.getElementById('p-img').value = ''; // Reset file input
+            document.getElementById('current-image-url').value = '';
             document.getElementById('modal-title').innerText = "Ajouter un produit";
         }
 
@@ -280,12 +335,13 @@
 
         function editProduct(product) {
             openModal();
-            document.getElementById('modal-title').innerText = "Modifier";
+            document.getElementById('modal-title').innerText = "Modifier le produit";
             document.getElementById('edit-id').value = product.id;
             document.getElementById('p-name').value = product.name;
             document.getElementById('p-price').value = product.price;
             document.getElementById('p-desc').value = product.description;
-            document.getElementById('p-img').value = product.image_url;
+            document.getElementById('current-image-url').value = product.image_url; // Sauvegarde l'URL actuelle
+            // On ne met pas de valeur à l'input file pour sécurité
         }
     </script>
     

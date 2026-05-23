@@ -315,7 +315,7 @@
             grid.innerHTML = "";
 
             products.forEach(product => {
-                const tmoneyLink = `tel:*145*2*${MY_NUMBER}*${product.price}#`;
+                const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
                 const floozLink = `tel:*155*2*${MY_NUMBER}*${product.price}#`;
                 const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=Bonjour, je veux payer pour : ${product.name}`;
 
