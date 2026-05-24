@@ -546,30 +546,32 @@
             try {
                 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-                // Eviter de compter plusieurs fois le meme visiteur dans la meme session
-                const alreadyCounted = sessionStorage.getItem('estelle_view_counted');
+                // Verifier si ce visiteur a deja ete compte (localStorage persiste meme apres fermeture du navigateur)
+                const visitorId = localStorage.getItem('estelle_visitor_id');
 
-                if (!alreadyCounted) {
+                if (!visitorId) {
+                    // Generer un identifiant unique pour ce visiteur
+                    const newId = 'v_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+
                     // Inserer une nouvelle ligne de visite
-                    const { data, error: insertError } = await client
+                    const { error: insertError } = await client
                         .from('page_views')
-                        .insert([{ visited_at: new Date().toISOString() }])
-                        .select();
+                        .insert([{ visitor_id: newId, visited_at: new Date().toISOString() }]);
 
                     if (insertError) {
-                        console.error('Erreur insertion vue:', insertError.message, insertError);
+                        console.error('Erreur insertion vue:', insertError.message);
                     } else {
-                        sessionStorage.setItem('estelle_view_counted', 'true');
+                        localStorage.setItem('estelle_visitor_id', newId);
                     }
                 }
 
-                // Recuperer le nombre total de vues
+                // Recuperer le nombre total de vues uniques
                 const { count, error: countError } = await client
                     .from('page_views')
                     .select('*', { count: 'exact', head: true });
 
                 if (countError) {
-                    console.error('Erreur comptage vues:', countError.message, countError);
+                    console.error('Erreur comptage vues:', countError.message);
                 }
 
                 if (!countError && count !== null) {
@@ -580,7 +582,6 @@
                         setTimeout(() => countEl.classList.remove('count-pulse'), 500);
                     }
                 } else {
-                    // Si erreur, afficher "?" au lieu de "--"
                     const countEl = document.getElementById('view-count');
                     if (countEl) countEl.textContent = '?';
                 }
