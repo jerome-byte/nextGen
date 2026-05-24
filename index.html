@@ -635,7 +635,7 @@
             const imageUrl = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
             const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
             const floozLink = `tel:*155*1*1*${MY_NUMBER}*${MY_NUMBER}*${product.price}*1#`;
-            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n📌 *${product.name}*\n💰 *${product.price.toLocaleString()} FCFA*\n📝 ${product.description}\n🖼️ Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n *${product.name}*\n *${product.price.toLocaleString()} FCFA*\n ${product.description}\n Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
 
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = `
