@@ -234,6 +234,87 @@
         .count-pulse {
             animation: countPulse 0.5s ease;
         }
+
+        /* ============================================= */
+        /* MODAL PRODUIT                                 */
+        /* ============================================= */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            position: fixed;
+            inset: 0;
+            z-index: 61;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-container.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 1.25rem;
+            max-width: 380px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-container.open .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        html.dark .modal-content {
+            background: #111111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 5;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .modal-close-btn:hover {
+            background: rgba(220,38,38,0.9);
+        }
+
+        /* Carte produit clickable sur mobile */
+        .product-card-clickable {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="font-rajdhani flex flex-col">
@@ -353,7 +434,7 @@
         <div id="loader" class="loader"></div>
 
         <!-- Grille Produits -->
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
             <!-- Injecté par JS -->
         </div>
     </main>
@@ -443,6 +524,21 @@
     </footer>
 
 
+    <!-- ============================================= -->
+    <!-- MODAL PRODUIT                                 -->
+    <!-- ============================================= -->
+    <div id="modal-backdrop" class="modal-backdrop" onclick="closeProductModal()"></div>
+    <div id="modal-container" class="modal-container">
+        <div class="modal-content relative">
+            <button class="modal-close-btn" onclick="closeProductModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div id="modal-body">
+                <!-- Injecté par JS -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -486,58 +582,105 @@
             trackPageView();
         });
 
+        // Stockage global des produits pour le modal
+        let allProducts = [];
+
         function renderProducts(products) {
+            allProducts = products;
             const grid = document.getElementById('product-grid');
             grid.innerHTML = "";
 
             if (products.length === 0) {
-                grid.innerHTML = `<p class="text-center col-span-3 text-gray-500">Aucun produit disponible pour le moment.</p>`;
+                grid.innerHTML = `<p class="text-center col-span-2 md:col-span-3 text-gray-500">Aucun produit disponible pour le moment.</p>`;
                 return;
             }
 
-            products.forEach(product => {
+            products.forEach((product, index) => {
                 const imageUrl = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
-                const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
-                const floozLink = `tel:*155*1*1*${MY_NUMBER}*${MY_NUMBER}*${product.price}*1#`;
-                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n📌 *${product.name}*\n💰 *${product.price.toLocaleString()} FCFA*\n📝 ${product.description}\n🖼️ Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
 
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl overflow-hidden flex flex-col h-full group";
+                card.className = "glass-card rounded-2xl overflow-hidden flex flex-col h-full group product-card-clickable";
+                card.onclick = function() { openProductModal(index); };
                 
                 card.innerHTML = `
-                    <div class="relative h-96 overflow-hidden bg-gray-200 dark:bg-gray-800">
+                    <div class="relative h-40 md:h-96 overflow-hidden bg-gray-200 dark:bg-gray-800">
                         <img src="${imageUrl}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Error+Image'">
                         
-                        <div class="absolute bottom-4 left-4">
-                            <div class="bg-black/90 backdrop-blur text-neonBlue border border-neonBlue/30 px-3 py-1 rounded-full text-sm font-bold font-orbitron inline-block">
+                        <div class="absolute bottom-2 left-2 md:bottom-4 md:left-4">
+                            <div class="bg-black/90 backdrop-blur text-neonBlue border border-neonBlue/30 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-bold font-orbitron inline-block">
                                 ${product.price.toLocaleString()} FCFA
                             </div>
                         </div>
                     </div>
                     
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white font-orbitron mb-2 group-hover:text-neonBlue transition-colors">${product.name}</h3>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow leading-relaxed">${product.description}</p>
+                    <div class="p-2 md:p-6 flex flex-col flex-grow">
+                        <h3 class="text-sm md:text-xl font-bold text-gray-900 dark:text-white font-orbitron mb-1 md:mb-2 group-hover:text-neonBlue transition-colors line-clamp-1 md:line-clamp-none">${product.name}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm mb-3 md:mb-6 flex-grow leading-relaxed line-clamp-2 md:line-clamp-none">${product.description}</p>
                         
-                        <div class="space-y-3 mt-auto">
-                            <div class="grid grid-cols-2 gap-3">
-                                <a href="${tmoneyLink}" class="flex items-center justify-center gap-2 bg-blue-100 hover:bg-blue-600 border border-blue-500/30 hover:border-blue-400 text-blue-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
-                                    <span class="w-2 h-2 rounded-full bg-blue-600"></span> T-Money
-                                </a>
-                                <a href="${floozLink}" class="flex items-center justify-center gap-2 bg-purple-100 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-400 text-purple-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
-                                    <span class="w-2 h-2 rounded-full bg-purple-600"></span> Flooz
-                                </a>
-                            </div>
-                            <a href="${waLink}" target="_blank" class="flex items-center justify-center gap-2 bg-green-100 hover:bg-green-500 border border-green-500/30 hover:border-green-400 text-green-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                                Confirmer sur WhatsApp
-                            </a>
-                        </div>
+                        <button onclick="event.stopPropagation(); openProductModal(${index})" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-neonBlue to-neonPurple text-white py-2 md:py-3 rounded-lg text-xs md:text-sm font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" /></svg>
+                            Commander
+                        </button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
+
+        // --- MODAL PRODUIT ---
+        function openProductModal(index) {
+            const product = allProducts[index];
+            if (!product) return;
+
+            const imageUrl = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
+            const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
+            const floozLink = `tel:*155*1*1*${MY_NUMBER}*${MY_NUMBER}*${product.price}*1#`;
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n📌 *${product.name}*\n💰 *${product.price.toLocaleString()} FCFA*\n📝 ${product.description}\n🖼️ Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
+
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="relative overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-t-2xl flex items-center justify-center" style="max-height:40vh;">
+                    <img src="${imageUrl}" class="w-full h-auto max-h-[40vh] object-contain" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Error+Image'">
+                </div>
+                <div class="p-5 md:p-6">
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white font-orbitron mb-2">${product.name}</h3>
+                    <div class="bg-black/90 dark:bg-neonBlue/10 backdrop-blur text-neonBlue border border-neonBlue/30 px-4 py-2 rounded-full text-base md:text-lg font-bold font-orbitron inline-block mb-4">
+                        ${product.price.toLocaleString()} FCFA
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">${product.description}</p>
+                    
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="${tmoneyLink}" class="flex items-center justify-center gap-2 bg-blue-100 hover:bg-blue-600 border border-blue-500/30 hover:border-blue-400 text-blue-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
+                                <span class="w-2 h-2 rounded-full bg-blue-600"></span> T-Money
+                            </a>
+                            <a href="${floozLink}" class="flex items-center justify-center gap-2 bg-purple-100 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-400 text-purple-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
+                                <span class="w-2 h-2 rounded-full bg-purple-600"></span> Flooz
+                            </a>
+                        </div>
+                        <a href="${waLink}" target="_blank" class="flex items-center justify-center gap-2 bg-green-100 hover:bg-green-500 border border-green-500/30 hover:border-green-400 text-green-700 hover:text-white py-3 rounded-lg text-sm font-bold transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            Confirmer sur WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modal-backdrop').classList.add('open');
+            document.getElementById('modal-container').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductModal() {
+            document.getElementById('modal-backdrop').classList.remove('open');
+            document.getElementById('modal-container').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fermer le modal avec la touche Echap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeProductModal();
+        });
 
         // --- COMPTEUR DE VUES ---
         async function trackPageView() {
