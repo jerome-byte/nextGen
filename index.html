@@ -189,6 +189,51 @@
         html.dark .mobile-drawer-footer {
             border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
+
+        /* ============================================= */
+        /* COMPTEUR DE VUES                              */
+        /* ============================================= */
+        .view-counter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: #00f3ff;
+            transition: all 0.3s ease;
+        }
+        html.dark .view-counter-badge {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.25);
+        }
+        .view-counter-badge:hover {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: rgba(0, 243, 255, 0.5);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.2);
+        }
+        .view-counter-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+        .view-counter-badge .count-num {
+            font-family: 'Orbitron', sans-serif;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        @keyframes countPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .count-pulse {
+            animation: countPulse 0.5s ease;
+        }
     </style>
 </head>
 <body class="font-rajdhani flex flex-col">
@@ -223,6 +268,12 @@
                     <span>CONTACT</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </a>
+
+                <!-- COMPTEUR DE VUES -->
+                <div id="view-counter" class="view-counter-badge" title="Nombre de visites du site">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <span class="count-num" id="view-count">--</span>
+                </div>
 
                 <!-- MENU MOBILE BUTTON (Hamburger) -->
                 <button onclick="toggleMobileMenu()" id="hamburger-btn" class="md:hidden text-gray-900 dark:text-white focus:outline-none p-1">
@@ -398,8 +449,8 @@
         // --- CONFIGURATION ---
         const SUPABASE_URL = 'https://fjietucyqdolguxgpvpr.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWV0dWN5cWRvbGd1eGdwdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODU0OTIsImV4cCI6MjA5NTA2MTQ5Mn0.RRRQKtvzBhdYA7IsOgRL3rUgm1ybafXJkS1bUrzjbxY';
-        const MY_NUMBER = "96359954"; 
-        const WHATSAPP_NUMBER = "22896359954";
+        const MY_NUMBER = "97324256"; 
+        const WHATSAPP_NUMBER = "22897324256";
 
         document.addEventListener('DOMContentLoaded', async () => {
             const grid = document.getElementById('product-grid');
@@ -430,6 +481,9 @@
             loader.style.display = 'none';
 
             renderProducts(products);
+
+            // --- COMPTEUR DE VUES ---
+            trackPageView();
         });
 
         function renderProducts(products) {
@@ -445,7 +499,8 @@
                 const imageUrl = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
                 const tmoneyLink = `tel:*145*1*${product.price}*${MY_NUMBER}*2#`;
                 const floozLink = `tel:*155*1*1*${MY_NUMBER}*${MY_NUMBER}*${product.price}*1#`;
-                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n *${product.name}*\n *${product.price.toLocaleString()} FCFA*\n ${product.description}\n Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
+                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par ce produit :\n\n📌 *${product.name}*\n💰 *${product.price.toLocaleString()} FCFA*\n📝 ${product.description}\n🖼️ Image : ${imageUrl}\n\nJe souhaite confirmer ma commande. Merci !`)}`;
+
                 const card = document.createElement('div');
                 card.className = "glass-card rounded-2xl overflow-hidden flex flex-col h-full group";
                 
@@ -482,6 +537,47 @@
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        // --- COMPTEUR DE VUES ---
+        async function trackPageView() {
+            if (!window.supabase) return;
+
+            try {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+                // Eviter de compter plusieurs fois le meme visiteur dans la meme session
+                const alreadyCounted = sessionStorage.getItem('estelle_view_counted');
+
+                if (!alreadyCounted) {
+                    // Inserer une nouvelle ligne de visite
+                    const { error: insertError } = await client
+                        .from('page_views')
+                        .insert([{ visited_at: new Date().toISOString() }]);
+
+                    if (insertError) {
+                        console.warn('Erreur insertion vue:', insertError.message);
+                    } else {
+                        sessionStorage.setItem('estelle_view_counted', 'true');
+                    }
+                }
+
+                // Recuperer le nombre total de vues
+                const { count, error: countError } = await client
+                    .from('page_views')
+                    .select('*', { count: 'exact', head: true });
+
+                if (!countError && count !== null) {
+                    const countEl = document.getElementById('view-count');
+                    if (countEl) {
+                        countEl.textContent = count.toLocaleString();
+                        countEl.classList.add('count-pulse');
+                        setTimeout(() => countEl.classList.remove('count-pulse'), 500);
+                    }
+                }
+            } catch (e) {
+                console.warn('Erreur compteur de vues:', e);
+            }
         }
 
         // --- GESTION MENU DRAWER MOBILE ---
